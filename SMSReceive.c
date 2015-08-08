@@ -60,8 +60,8 @@ void sms_read_sms_sample_callback(vm_gsm_sms_callback_t* callback_data){
 /* Reads the SMS */
 void sms_read_sms_sample(void){
     VMINT16 message_id;
-    vm_gsm_sms_read_message_data_t* message_data = NULL;
-    VMWCHAR* content_buff;
+    vm_gsm_sms_read_message_data_t* message_data = NULL;//读短信的数据的结构体
+    VMWCHAR* content_buff;//存短信内容
     VMINT res;
     VMINT number_count = 0;
     VMBOOL result;
@@ -70,7 +70,7 @@ void sms_read_sms_sample(void){
     result = vm_gsm_sim_has_card();
     vm_log_debug("sms read sim card result %d", result);
     /* Gets the message ID of the first message in the SMS inbox */
-    message_id = vm_gsm_sms_get_message_id(VM_GSM_SMS_BOX_INBOX, 0);
+    message_id = vm_gsm_sms_get_message_id(VM_GSM_SMS_BOX_INBOX, 0);//用于获取将要读取的短信ID，读取短信函数的相关输入变量
     if(message_id == -1){
         vm_log_debug("sms read message id error");
         return;
@@ -84,14 +84,14 @@ void sms_read_sms_sample(void){
     }
     
     /* Allocates memory for the content buffer of the message */
-    content_buff = (VMWCHAR*)vm_calloc((500+1)*sizeof(VMWCHAR));
+    content_buff = (VMWCHAR*)vm_calloc((500+1)*sizeof(VMWCHAR));//vm_calloc初始化一定内存空间
     if(content_buff == NULL){
-        vm_free(message_data);
+        vm_free(message_data);//释放message_data的空间
         vm_log_debug("sms read malloc content fail");
         return;
 
     }
-    message_data->content_buffer = content_buff;
+    message_data->content_buffer = content_buff;//
     message_data->content_buffer_size = 500;
     
     /* Reads the message */
@@ -124,7 +124,7 @@ void handle_sysevt(VMINT message, VMINT param) {
         case VM_EVENT_CREATE:
 
         /* Creates a precise timer of 10 seconds to wait for the SMS message ready. */
-        timer_id = vm_timer_create_precise(10000, sms_read_sms_sample_timer_callback, NULL);
+        timer_id = vm_timer_create_precise(10000, sms_read_sms_sample_timer_callback, NULL);//建立定时器，每10秒检测一次SMS卡是否准备好
         if(timer_id < 0){
             vm_log_debug("sms read sms create timer fail");
         }
